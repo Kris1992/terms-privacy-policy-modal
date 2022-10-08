@@ -32,6 +32,10 @@ if (!file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     die('Missing autoload file');
 }
 
+if (!file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php')) {
+    die('Missing autoupdate file');
+}
+
 require dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php';
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
     'https://github.com/Kris1992/terms-privacy-policy-modal',

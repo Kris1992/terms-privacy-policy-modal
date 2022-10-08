@@ -30,14 +30,15 @@ class Enqueue extends BaseController
         add_action('wp_enqueue_scripts', [$this, 'enqueuePublic']);
     }
 
-    public static function enqueueAdmin() {
-        wp_enqueue_style('tppmPluginStyleAdmin', $this->pluginUrl . 'assets/css/tppmStyle.css');
-        wp_enqueue_script('tppmPluginScriptAdmin', $this->pluginUrl . 'assets/js/tppmScript.js');
+    public function enqueueAdmin() {
+        $pluginUrl = plugin_dir_url(dirname(__FILE__, 2));
+        wp_enqueue_style('tppmPluginStyleAdmin', $pluginUrl . 'assets/css/tppmStyle.css');
+        wp_enqueue_script('tppmPluginScriptAdmin', $pluginUrl . 'assets/js/tppmScript.js');
     }
 
-    public static function enqueuePublic() {
-        wp_enqueue_style('tppmPluginStylePublic', $this->pluginUrl . 'assets/css/tppmModal.css');
-        wp_enqueue_script('tppmPluginScriptPublic', $this->pluginUrl . 'assets/js/tppmModal.js', ['jquery']);
+    public function enqueuePublic() {
+        wp_enqueue_style('tppmPluginStylePublic', $pluginUrl . 'assets/css/tppmModal.css');
+        wp_enqueue_script('tppmPluginScriptPublic', $pluginUrl . 'assets/js/tppmModal.js', ['jquery']);
         wp_localize_script('tppmPluginScriptPublic', 'urlHandler', ['ajaxUrl' => admin_url('admin-ajax.php')]);
     }
 }
