@@ -1,0 +1,19 @@
+{
+    "name": "krzysztof/terms-privacy-policy-modal",
+    "description": "Accept terms and privacy policy modal",
+    "type": "project",
+    "license": "GPL",
+    "autoload": {
+        "psr-4": {
+            "Kris1992\\TermsPrivacyPolicyModal\\Includes\\": "./includes"
+        }
+    },
+    "authors": [
+        {
+            "name": "Kris1992",
+            "email": "krzysiekrej@o2.pl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
