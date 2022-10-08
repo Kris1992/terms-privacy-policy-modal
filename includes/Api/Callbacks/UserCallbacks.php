@@ -34,9 +34,9 @@ class UserCallbacks extends BaseController
                     $filename = basename(parse_url($relatedAttachment->guid, PHP_URL_PATH));
                     $tppmDocumentData['attachmentName'] = $filename;
                     $tppmDocumentData['attachmentLink'] = $relatedAttachment->guid;
-                    $datetime = new \DateTime($tppmDocumentData['date']);
-                    $tppmDocumentData['printDate'] = $datetime->format('d/m/Y');
-                    $tppmDocumentData['printTime'] = $datetime->format('H:i:s');
+                    $dateTime = new \DateTime($tppmDocumentData['date'], new \DateTimeZone('Europe/Warsaw'));
+                    $tppmDocumentData['printDate'] = $dateTime->format('d/m/Y');
+                    $tppmDocumentData['printTime'] = $dateTime->format('H:i:s');
                     $tppmFinalDocumentsData[] = $tppmDocumentData;
                 }
             } 

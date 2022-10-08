@@ -144,14 +144,15 @@ class ModalShowController extends BaseController
     /** Save only first and last accepted modal and return update state */
     private function saveLastUserModalMeta($lastModalsMeta, $currentActiveModalId) 
     {
+        $dateTime = new \DateTime('now', new \DateTimeZone('Europe/Warsaw'));
         if (empty($lastModalsMeta)) {
             $termsData = [
                 'first' => [
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => $dateTime->format('Y-m-d H:i:s'),
                     'version' => $currentActiveModalId,
                 ],
                 'last' => [
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => $dateTime->format('Y-m-d H:i:s'),
                     'version' => $currentActiveModalId,
                 ]
             ];
@@ -166,7 +167,7 @@ class ModalShowController extends BaseController
 
         $lastModalsMeta = [
             'last' => [
-                'date' => date('Y-m-d H:i:s'),
+                'date' => $dateTime->format('Y-m-d H:i:s'),
                 'version' => $currentActiveModalId,
             ]
         ];
@@ -178,10 +179,11 @@ class ModalShowController extends BaseController
     /** Save full array with accepted terms */
     private function saveUserModalMeta($acceptedModalsMeta, $currentActiveModalId) 
     {
+        $dateTime = new \DateTime('now', new \DateTimeZone('Europe/Warsaw'));
         if (empty($acceptedModalsMeta)) {
             $newModalData = [
                 [ 
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => $dateTime->format('Y-m-d H:i:s'),
                     'version' => $currentActiveModalId,
                 ]
             ];
@@ -196,7 +198,7 @@ class ModalShowController extends BaseController
             return true;
         }
 
-        array_push($acceptedModalsMeta, ['date' => date('Y-m-d H:i:s'), 'version' => $currentActiveModalId]);
+        array_push($acceptedModalsMeta, ['date' => $dateTime->format('Y-m-d H:i:s'), 'version' => $currentActiveModalId]);
         $serializedMeta = serialize($acceptedModalsMeta);
         return ((int)update_user_meta($this->currentUserId, 'tppm_accepted_modals', $serializedMeta)) > 0;
 
@@ -221,4 +223,3 @@ class ModalShowController extends BaseController
         add_action('wp_ajax_ttpmSetUserTerms', [$this, 'ttpmSetUserTermsAjax']);
     }
 }
-

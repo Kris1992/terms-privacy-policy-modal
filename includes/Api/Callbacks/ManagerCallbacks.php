@@ -1,5 +1,5 @@
 <?php
-//Done
+
 namespace Kris1992\TermsPrivacyPolicyModal\Includes\Api\Callbacks;
 
 use \Kris1992\TermsPrivacyPolicyModal\Includes\Base\BaseController;

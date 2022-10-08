@@ -23,7 +23,7 @@ use \Kris1992\TermsPrivacyPolicyModal\Includes\Base\BaseController;
 class PublicCallbacks extends BaseController
 {
 
-    public function publicModal($tppmModalToAccept)// funkcja sprawdzona
+    public function publicModal($tppmModalToAccept)
     {
         $tppmDocumentsToAccept = [];
         //Get all taxonomies and merge all data about it to array

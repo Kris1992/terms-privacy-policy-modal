@@ -32,6 +32,19 @@ if (!file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     die('Missing autoload file');
 }
 
+require dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php';
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+    'https://github.com/Kris1992/terms-privacy-policy-modal',
+    __FILE__,
+    'terms-privacy-policy-modal'
+);
+
+//Set the branch that contains the stable release.
+$myUpdateChecker->setBranch('master');
+
+//Optional: If you're using a private repository, specify the access token like this:
+// $myUpdateChecker->setAuthentication('your-token-here');
+
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 use Kris1992\TermsPrivacyPolicyModal\Includes\Base\Activator;
 use Kris1992\TermsPrivacyPolicyModal\Includes\Base\Deactivator;
@@ -50,10 +63,6 @@ register_activation_hook(__FILE__, 'activate_terms_privacy_policy_modal');
 //Deactivation
 register_deactivation_hook(__FILE__, 'deactivate_terms_privacy_policy_modal');
 
-//Uninstall (only static) lepiej nie używać tylko dodać uninstall.php
-//register_uninstall_hook(__FILE__, [$tutorialPlugin, 'uninstall']);
-
 if (class_exists('Kris1992\\TermsPrivacyPolicyModal\\Includes\\Init')) {
     Kris1992\TermsPrivacyPolicyModal\Includes\Init::register_services();
 }
-

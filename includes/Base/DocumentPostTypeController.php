@@ -198,7 +198,6 @@ class DocumentPostTypeController extends BaseController
                 'rewrite'           => ['slug' => $option['taxonomy']],
             ];
         }
-        //get_post_types  aby pobrać wszystkie post typy
     }
 
     public function registerCustomDocument()

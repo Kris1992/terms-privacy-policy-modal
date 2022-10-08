@@ -41,4 +41,3 @@ class UserController extends BaseController
         $this->userCallbacks->showUserProfile($user);
     }
 }
-

@@ -37,7 +37,7 @@ class UserListController extends BaseController
                     return 'Brak danych';
                 }
 
-                return $data['last']['date'] . ' --- v.' . $data['last']['version'];
+                return $data['last']['date'] . ' -> v.' . $data['last']['version'];
         }
         return $val;
     }
@@ -47,4 +47,3 @@ class UserListController extends BaseController
         return $column;
     }
 }
-
