@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name:       Terms Privacy Policy Modal
  * Description:       It allows you to display a modal with consents to the privacy policy and regulations
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Kris1992
  * License:           GPLv3
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
