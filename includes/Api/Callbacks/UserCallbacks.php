@@ -41,6 +41,7 @@ class UserCallbacks extends BaseController
                 }
             } 
         }
+
         return require_once $this->pluginPath . '/templates/userProfile.php';
     }
 }

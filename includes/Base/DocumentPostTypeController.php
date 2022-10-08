@@ -76,7 +76,6 @@ class DocumentPostTypeController extends BaseController
         }
     }
 
-
     public function restrictTaxonomyUpdate($termId, $taxonomy) 
     {
         if (strpos($taxonomy, 'tppmd_') !== false) {
@@ -207,4 +206,3 @@ class DocumentPostTypeController extends BaseController
         }
     }
 }
-

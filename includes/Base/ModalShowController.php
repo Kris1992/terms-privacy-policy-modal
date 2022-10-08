@@ -50,9 +50,16 @@ class ModalShowController extends BaseController
 
     public function ttpmSetUserTermsAjax()
     { 
+        if (!check_ajax_referer('tppm-modals-nonce', 'nonce', false)) {
+            wp_send_json_error(['message' => 'Błędny token'], 400);
+        }
         $this->currentUserId = (int)get_current_user_id();
         $this->activeTermsModal = wp_get_recent_posts(['post_type' => 'tppm_modals', 'posts_per_page' => 1]);
 
+        if (!$this->checkConfirmations()) {
+            wp_send_json_error(['message' => 'Zaznaczenie zgód jest wymagane!'], 400);
+        }
+        
         if (empty($this->activeTermsModal) 
             || $this->currentUserId <= 0 
             || !$this->saveUserModalMetaAll()
@@ -128,6 +135,7 @@ class ModalShowController extends BaseController
         $result = true;
         $result &= $this->saveLastUserModalMeta($lastModalsMeta, $currentActiveModalId);
         $result &= $this->saveUserModalMeta($acceptedModalsMeta, $currentActiveModalId);
+    
         return $result;
     }
 
@@ -200,8 +208,8 @@ class ModalShowController extends BaseController
 
         array_push($acceptedModalsMeta, ['date' => $dateTime->format('Y-m-d H:i:s'), 'version' => $currentActiveModalId]);
         $serializedMeta = serialize($acceptedModalsMeta);
+        
         return ((int)update_user_meta($this->currentUserId, 'tppm_accepted_modals', $serializedMeta)) > 0;
-
     }
 
     /* Function which check user has role */
@@ -221,5 +229,29 @@ class ModalShowController extends BaseController
     private function setupAjaxActions()
     {
         add_action('wp_ajax_ttpmSetUserTerms', [$this, 'ttpmSetUserTermsAjax']);
+    }
+
+    private function checkConfirmations()
+    {
+        if (!isset($_POST['data'])) {
+            return false;
+        }
+        $currentActiveModalId = (int)$this->activeTermsModal[0]['ID'];
+        $taxonomies = get_post_taxonomies($currentActiveModalId);
+
+        foreach ($taxonomies as $taxonomy) {
+            $documentsData = get_the_terms($currentActiveModalId, $taxonomy);
+            if (empty($documentsData) && is_wp_error($documentsData)) {
+                return false;
+            }
+            foreach ($documentsData as $document) {
+                $checkBoxName = 'tppm-checkbox-' . $document->term_id;
+                if (!isset($_POST['data'][$checkBoxName]) || $_POST['data'][$checkBoxName] !== 'true') {
+                    return false;
+                }
+            }     
+        }
+        
+        return true;
     }
 }

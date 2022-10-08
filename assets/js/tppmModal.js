@@ -1,5 +1,12 @@
 window.addEventListener('load', function() {
 
+    function anchorify(text) {
+        const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        const text1=text.replace(exp, "<a href='$1'>$1</a>");
+        const exp2 =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+    }
+
     function setTPPMErrors(message) {
         const tppmModalErrorsWrapperDOM = document.querySelector('#js-tppm-errors-wrapper');
         if (tppmModalErrorsWrapperDOM === null) {
@@ -18,13 +25,14 @@ window.addEventListener('load', function() {
         if (tppmModalDOM === null || tppmModalOverlayDOM === null) {
             return;
         }
+        
         tppmModalDOM.remove();
         tppmModalOverlayDOM.remove();
     }
 
     function checkTPPMTermsCheckboxes() {
         const checkboxesDOM = document.querySelectorAll('.js-tppm-modal-checkbox');
-        if (checkboxesDOM === null) {
+        if (checkboxesDOM.length <= 0) {
             return false;
         }
         let result = true;
@@ -42,6 +50,14 @@ window.addEventListener('load', function() {
     if (tppmModalDOM === null || tppmModalOverlayDOM === null) {
         return;
     }
+
+    const tppmLabelsDOM = document.querySelectorAll('.js-tppm-checkbox-label-text');
+    if (tppmLabelsDOM.length > 0) {
+        tppmLabelsDOM.forEach(function(label) {
+            label.innerHTML = anchorify(label.textContent);
+        });
+    }
+    
     tppmModalOverlayDOM.classList.add('active');
     tppmModalDOM.style.display = 'grid';  
 
@@ -51,7 +67,7 @@ window.addEventListener('load', function() {
     }
 
     const checkboxesDOM = document.querySelectorAll('.js-tppm-modal-checkbox');
-    if (checkboxesDOM !== null) {
+    if (checkboxesDOM.length <= 0) {
         checkboxesDOM.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
                 cleanTPPMErrors();
@@ -62,6 +78,7 @@ window.addEventListener('load', function() {
     tppmFormDOM.addEventListener('submit', function(event) {
         event.preventDefault();
         cleanTPPMErrors();
+        
         if (!checkTPPMTermsCheckboxes()) {
             setTPPMErrors('Zaznaczenie zgód jest wymagane');
             return;
@@ -71,13 +88,28 @@ window.addEventListener('load', function() {
             return;
         }
         const acceptedModalId = tppmModalDOM.dataset.tppmModalId || 0;
+        const inputsDOM = document.querySelectorAll('.js-tppm-modal-input');
+        if (inputsDOM.length <= 0) {
+            return;
+        }
+        
+        let data = {};
+        inputsDOM.forEach(function(input) {
+            if (input.type === 'checkbox') {
+                Object.assign(data, {[input.name]: input.checked});
+            } else {
+                Object.assign(data, {[input.name]: input.value});
+            }
+        }); 
 
         jQuery.ajax({
             type: 'POST',
             url: urlHandler.ajaxUrl,
             data: {
                 action: 'ttpmSetUserTerms',
-                acceptedModalId: acceptedModalId
+                acceptedModalId: acceptedModalId,
+                nonce: data.nonce || '',
+                data: data
             },
             success: function(response) {
                 if (parseInt(response, 10) === 0 

@@ -19,9 +19,11 @@
                         foreach ($tppmDocumentsToAccept as $tppmDocument) {
                     ?>
                         <div class="tppm-modal-checkbox">
-                            <input type="checkbox" id="tppm-checkbox-<?php echo esc_attr($tppmDocument->term_id) ?>" class="js-tppm-modal-checkbox" value="1" required="true">
+                            <input type="checkbox" name="tppm-checkbox-<?php echo esc_attr($tppmDocument->term_id) ?>" 
+                            id="tppm-checkbox-<?php echo esc_attr($tppmDocument->term_id) ?>" 
+                            class="js-tppm-modal-checkbox js-tppm-modal-input" value="1" required="true">
                             <label class="js-tppm-checkbox-label" for="tppm-checkbox-<?php echo esc_attr($tppmDocument->term_id) ?>">
-                                <span><?php echo $tppmDocument->description ?></span>
+                                <span class="js-tppm-checkbox-label-text"><?php echo $tppmDocument->description ?></span>
                             </label>
                         </div>
                     <?php
@@ -33,6 +35,9 @@
                 </div>
             </div>
             <div class="tppm-modal-footer">
+                <input type="hidden" name="nonce" class="js-tppm-modal-input" 
+                    value="<?php echo wp_create_nonce('tppm-modals-nonce') ?>"
+                >
                 <button type="submit" class="tppm-modal-btn">Akceptuję</button>
             </div>
         </form>
