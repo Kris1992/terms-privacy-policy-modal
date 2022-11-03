@@ -37,6 +37,8 @@ class BaseController
         $this->checkboxFields = [
             'enable_ttpm_modals' => 'Włącz funkcjonalność modali',
             'modal_cpt_manager' => 'Umożliwiaj tworzenie modali', 
+            'modal_cpt_allow_edit' => 'Umożliwiaj edycję modali (uwaga opcja niebezpieczna)',
+            'modal_cpt_allow_delete' => 'Umożliwiaj usuwanie utworzonych modali (uwaga opcja niebezpieczna)',
             'document_cpt_manager' => 'Umożliwiaj tworzenie/edycję typów dokumentów (uwaga opcja niebezpieczna)', 
             'require_admins_checkbox' => 'Wyświetlaj modale adminom'
         ];

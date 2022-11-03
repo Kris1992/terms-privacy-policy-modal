@@ -30,10 +30,12 @@ class ModalPostTypeController extends BaseController
 
     private $adminCallbacks;
 
+    private $tppmodalOptions;
+
     public function register() 
     {
-        $option = get_option('terms_privacy_policy_modal');
-        $isActivated = isset($option['modal_cpt_manager']) && $option['modal_cpt_manager'];
+        $this->tppmodalOptions = get_option('terms_privacy_policy_modal');
+        $isActivated = isset($this->tppmodalOptions['modal_cpt_manager']) && $this->tppmodalOptions['modal_cpt_manager'];
 
         if (!$isActivated) {
             return;
@@ -78,10 +80,19 @@ class ModalPostTypeController extends BaseController
 
     public function removeRowActionsPost($actions, $post) {
         if ($post->post_type === 'tppm_modals') {
-            unset($actions['inline hide-if-no-js']);
             unset($actions['clone']);
-            unset($actions['trash']);
-            unset($actions['edit']);
+            $allowDelete = isset($this->tppmodalOptions['modal_cpt_allow_delete']) 
+                && $this->tppmodalOptions['modal_cpt_allow_delete'];
+            if (!$allowDelete) {
+                unset($actions['trash']);
+            }
+
+            $allowEdit = isset($this->tppmodalOptions['modal_cpt_allow_edit']) 
+                && $this->tppmodalOptions['modal_cpt_allow_edit'];
+            if (!$allowEdit) {
+                unset($actions['inline hide-if-no-js']);
+                unset($actions['edit']);
+            }
         }
 
         return $actions;
@@ -92,15 +103,26 @@ class ModalPostTypeController extends BaseController
             return; //new post
         }
         
-        if (get_post_type($postId) === 'tppm_modals') {
-            wp_die('Modale związane z zgodami na regulaminy lub polityki prywatności nie podlegają edycji.');
+        if (get_post_type($postId) !== 'tppm_modals') {
+            return;
         }
+        $allowEdit = isset($this->tppmodalOptions['modal_cpt_allow_edit']) && $this->tppmodalOptions['modal_cpt_allow_edit'];
+        if ($allowEdit) {
+            return;// allow edit checkbox
+        }
+
+        wp_die('Modale związane z zgodami na regulaminy lub polityki prywatności nie podlegają edycji.');
     }
 
     public function restrictPostDeletion($postId) {
-        if (get_post_type($postId) === 'tppm_modals') {
-            wp_die('Modale związane z zgodami na regulaminy lub polityki prywatności nie podlegają usunięciu.');
+        if (get_post_type($postId) !== 'tppm_modals') {
+            return;
         }
+        $allowDelete = isset($this->tppmodalOptions['modal_cpt_allow_delete']) && $this->tppmodalOptions['modal_cpt_allow_delete'];
+        if ($allowDelete) {
+            return;// allow delete checkbox
+        }
+        wp_die('Modale związane z zgodami na regulaminy lub polityki prywatności nie podlegają usunięciu.');
     }
 
     public function registerModalCPT() 
