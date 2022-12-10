@@ -34,8 +34,11 @@ class ModalShowController extends BaseController
 
     private $publicCallbacks;
 
+    private $currentUrlPath = '';
+
     public function register() 
     {
+
         $this->modalsConfig = get_option('terms_privacy_policy_modal');
         $allowModals = isset($this->modalsConfig['enable_ttpm_modals']) && $this->modalsConfig['enable_ttpm_modals'];
         if (!$allowModals) {
@@ -97,8 +100,14 @@ class ModalShowController extends BaseController
 
     public function manageModal()
     {
-        if ($GLOBALS['pagenow'] === 'wp-login.php' || is_admin()) {
-            return;// If we are on login page just return
+        // Do not show modal in checkout and cart page or login page and admin area
+        if (
+            $GLOBALS['pagenow'] === 'wp-login.php' 
+            || is_admin() 
+            || $this->isWooCommerceCheckout() 
+            || $this->isWooCommerceCart()
+        ) {
+            return;
         }
 
         $this->currentUserId = (int)get_current_user_id();
@@ -253,5 +262,53 @@ class ModalShowController extends BaseController
         }
         
         return true;
+    }
+
+    /**
+     * Get current url path and set to private variable
+     */
+    private function setupUrlCurrentPath(): void
+    {
+        if (empty($this->currentUrlPath)) {
+            $this->currentUrlPath = wp_parse_url("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", PHP_URL_PATH);
+        }
+    }
+
+    /**
+     * Checks if woo commerce checkout is the current page.
+     *
+     * @return boolean
+     */
+    private function isWooCommerceCheckout(): bool
+    {
+        if (!function_exists('wc_get_checkout_url')) {
+            return false;
+        }
+
+        $checkoutPath = wp_parse_url(wc_get_checkout_url(), PHP_URL_PATH);
+        $this->setupUrlCurrentPath();
+      
+        return $checkoutPath !== null 
+            && $this->currentUrlPath !== null 
+            && trailingslashit($checkoutPath) === trailingslashit($this->currentUrlPath);
+    }
+
+    /**
+     * Checks if woo commerce cart is the current page.
+     *
+     * @return boolean
+     */
+    private function isWooCommerceCart(): bool
+    {
+        if (!function_exists('wc_get_cart_url')) {
+            return false;
+        }
+
+        $cartPath = wp_parse_url(wc_get_cart_url(), PHP_URL_PATH);
+        $this->setupUrlCurrentPath();
+
+        return $cartPath !== null
+            && $this->currentUrlPath !== null
+            && trailingslashit($cartPath) === trailingslashit($this->currentUrlPath);
     }
 }
